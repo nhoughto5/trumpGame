@@ -15,23 +15,43 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
-<div id="wrapper" onclick="getCoords(event)"></div>
+<div id="wrapper" onclick="Play(event)"></div>
 <script>
-function Play(){
-var audio = new Audio('China.mp3');
-audio.play();
-}
-function getCoords(event) {
-    var x = event.clientX;
-    var y = event.clientY;
-	alert("x: " + x + "  y: " + y);
-}
-window.onload = function() {
-  chooseLocation();
-};
-function chooseLocation(){
-	alert("Choosing");
-}
+	var pickedX;
+	var pickedY;
+	function Play(event){
+		var audio = new Audio('China.mp3');
+		audio.volume = getVolume(event);
+		audio.play();
+	}
+	function getVolume(event){
+		var screen = document.getElementById("wrapper");
+		var clickCoords = getCoords(event);
+		var longestDistance = Math.sqrt(Math.pow(screen.clientWidth, 2) + Math.pow(screen.clientHeight, 2));
+		var distance = Math.sqrt(Math.pow(pickedX - clickCoords[0],2) + Math.pow(pickedY - clickCoords[1],2));
+		console.log(distance + " / " + longestDistance + " = " + (distance / longestDistance));
+		return distance / longestDistance;
+	}
+	function getCoords(event) {
+		var x = event.clientX;
+		var y = event.clientY;
+		return [x,y];
+	}
+	window.onload = function() {
+	  chooseLocation();
+	};
+	function chooseLocation(){
+		var screen = document.getElementById("wrapper");
+		pickedX = getRandomInt(0, screen.clientWidth);
+		pickedY = getRandomInt(0, screen.clientHeight);
+		//alert(pickedX + "   " + pickedY);
+	}
+	function getRandomInt(min, max) {
+		var budget = 0.1;
+		min = max * budget;
+		max = max * (1-budget);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 </script>
 
 <p>Video courtesy of <a href="http://www.bigbuckbunny.org/" target="_blank">Big Buck Bunny</a>.</p>
