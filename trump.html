@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+	html, body {
+		height: 100%;
+		margin: 0;
+	}
+
+	#wrapper {
+		min-height: 100%; 
+	}
+</style>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+<div id="wrapper" onclick="getCoords(event)"></div>
+<script>
+function Play(){
+var audio = new Audio('China.mp3');
+audio.play();
+}
+function getCoords(event) {
+    var x = event.clientX;
+    var y = event.clientY;
+	alert("x: " + x + "  y: " + y);
+}
+window.onload = function() {
+  chooseLocation();
+};
+function chooseLocation(){
+	alert("Choosing");
+}
+</script>
+
+<p>Video courtesy of <a href="http://www.bigbuckbunny.org/" target="_blank">Big Buck Bunny</a>.</p>
+
+</body>
+</html>
