@@ -7,6 +7,10 @@
 		margin: 0;
 	}
 
+	img {
+		position: absolute;
+	}
+	
 	#wrapper {
 		min-height: 100%; 
 	}
@@ -15,22 +19,54 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
-<div id="wrapper" onclick="Play(event)"></div>
-<script>
+<div id="wrapper" width: 100%; height: 100%; style="border:1px solid #d3d3d3;"></div>
+<script type="text/javascript">
 	var pickedX;
 	var pickedY;
+	//Size ratio width = 193, height = 142 => W/H = 1.36
+	var iWidth = 50, iHeight = 55;
 	function Play(event){
-		var audio = new Audio('China.mp3');
-		audio.volume = getVolume(event);
-		audio.play();
+		//PositionImage(event);
+		//var audio = new Audio('China.mp3');
+		//audio.volume = getVolume(event);
+		//audio.play();
+	}
+	$("#wrapper").on("click",function(e){
+		var top = $(this).scrollTop() + e.pageY - $(this).offset().top,	left = e.pageX-$(this).offset().left;
+		var img = document.getElementById('image');
+		$('#image').remove();
+		var x = Math.round(left - iWidth/2);
+		var y = Math.round(top - iHeight/2);
+		console.log(x + " " + y);
+		$(this).append("<img src='trump.png' id='image' style='width:"+iWidth+"px; height: "+iHeight+"px; top:"+y+"px;left:"+x+"px;'/>");
+	});
+	function PositionImage(event){
+		var wrapper = document.getElementById("wrapper");
+		var ctx = wrapper.getContext("2d");
+		var img = new Image();
+		img.src = "trump.png";
+		img.style.width = '50px';
+		img.style.height = '55px';
+		wrapper.appendChild(img);
+		var x = Math.round(event.offsetX - img.width/2);
+		var y = Math.round(event.offsetY - img.height/2);
+		ctx.drawImage(img, 100, 100);
 	}
 	function getVolume(event){
 		var screen = document.getElementById("wrapper");
 		var clickCoords = getCoords(event);
-		var longestDistance = Math.sqrt(Math.pow(screen.clientWidth, 2) + Math.pow(screen.clientHeight, 2));
+		var longestDistance = getLongestPossibleDistance(screen.clientWidth, screen.clientHeight, pickedX, pickedY);
 		var distance = Math.sqrt(Math.pow(pickedX - clickCoords[0],2) + Math.pow(pickedY - clickCoords[1],2));
 		console.log(distance + " / " + longestDistance + " = " + (distance / longestDistance));
 		return distance / longestDistance;
+	}
+	//Theoretically one of the 4 corners has to be the farthest from any point on the screen
+	function getLongestPossibleDistance(screenX, screenY, targetX, targetY){
+		var bottomLeft = Math.sqrt(Math.pow(targetX - 0,2) + Math.pow(targetY - screenY,2));
+		var topLeft = Math.sqrt(Math.pow(targetX - 0,2) + Math.pow(targetY - 0,2));
+		var bottomRight = Math.sqrt(Math.pow(targetX - screenX,2) + Math.pow(targetY - screenY,2));
+		var topRight = Math.sqrt(Math.pow(targetX - 0,2) + Math.pow(targetY - screenY,2));
+		return Math.max(Math.max(Math.max(bottomLeft, bottomRight), topLeft), topRight);
 	}
 	function getCoords(event) {
 		var x = event.clientX;
@@ -39,6 +75,9 @@
 	}
 	window.onload = function() {
 	  chooseLocation();
+	  var wrapper = document.getElementById("wrapper");
+	  wrapper.style.border = "black 2px double";
+	  //PositionImage();
 	};
 	function chooseLocation(){
 		var screen = document.getElementById("wrapper");
@@ -53,8 +92,5 @@
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 </script>
-
-<p>Video courtesy of <a href="http://www.bigbuckbunny.org/" target="_blank">Big Buck Bunny</a>.</p>
-
 </body>
 </html>
