@@ -37,8 +37,12 @@
 	var targetPoint;
 	var topLeft, topRight, botLeft, botRight;
 	var iWidth = 150, iHeight = 155;
-
+	var pageLoaded = false;
 	$( document ).ready(function() {
+		if(!pageLoaded){
+			pageLoaded = true;
+			welcome();
+		}
 		chooseLocation();
 		PositionImage();
 		$("#trumpImage").css('opacity', '0');
@@ -53,9 +57,15 @@
 
 		});
 	});
+	function welcome(){
+		alertify.set({ labels: {
+			ok     : "Where Are You, Donnie?"
+		} });
+		alertify.alert("<h1>Find The Donald!</h1><p>Make sure your speakers are on.</p>");
+	}
 	function showDialog(){
 		// confirm dialog
-		alertify.confirm("You found the Donald", function (e) {
+		alertify.confirm("<h1>You found the Donald!</h1>", function (e) {
 			if (e) {
 				// user clicked "ok"
 				var likeChina = new Audio('Sounds/iLikeChina.mp3');
@@ -106,6 +116,7 @@
 			targetPoint = new vec2_t(x,y);
 			console.log("TrumpPosition: " + x + " " + y);
 			$(this).append("<img src='trump.png' id='trumpImage' style='width:"+iWidth+"px; height: "+iHeight+"px; top:"+y+"px;left:"+x+"px;'/>");
+			document.getElementById('trumpImage').ondragstart = function() { return false; };
 		});
 	}
 	function getVolume(event){
