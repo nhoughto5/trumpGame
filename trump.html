@@ -14,6 +14,7 @@
 	#wrapper {
 		min-height: 100%; 
 	}
+	.hidden { display: none; }
 </style>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -21,33 +22,49 @@
 <body>
 <div id="wrapper" width: 100%; height: 100%; style="border:1px solid #d3d3d3;"></div>
 <script type="text/javascript">
-	var pickedX;
-	var pickedY;
+	var trumpLocationX;
+	var trumpLocationY;
 	//Size ratio width = 193, height = 142 => W/H = 1.36
-	var iWidth = 50, iHeight = 55;
-	function Play(event){
-		//PositionImage(event);
-		//var audio = new Audio('China.mp3');
-		//audio.volume = getVolume(event);
-		//audio.play();
-	}
+	var iWidth = 150, iHeight = 155;
+
 	$( document ).ready(function() {
-	  chooseLocation();
-	  var wrapper = document.getElementById("wrapper");
-	  wrapper.style.border = "black 2px double";
-	  PositionImage();
+		chooseLocation();
+		var wrapper = document.getElementById("wrapper");
+		wrapper.style.border = "black 2px double";
+		PositionImage();
+		//$("#trumpImage").css("display", "block");
+		$("#trumpImage").css('opacity', '0');
+		$("#trumpImage").on("click", function(e){
+			//$("#trumpImage").css("display", "none")
+			$("#trumpImage").css('opacity', '1');
+		});
 	});
 	$("#wrapper").on("click",function(e){
+		console.log("Click: " + e.pageX + " " + e.pageY);
+		isClickOnImage(e.pageX, e.pageY)
 		var audio = new Audio('China.mp3');
 		audio.volume = getVolume(event);
 		audio.play();
 	});
-	//$("#trumpImage")
+
+	function isClickOnImage(clickX, clickY){
+		var ret = false;
+		console.log("x: " + (clickX - trumpLocationX/2) + "  y: " + (clickY - trumpLocationY/2));
+		var xClipped = (clickX - trumpLocationX / 2) > 0 ? (clickX - trumpLocationX / 2) : 1000;
+		var yClipped = (clickY - trumpLocationY / 2) > 0 ? (clickY - trumpLocationY / 2) : 1000;
+		if((xClipped < iWidth)&&(yClipped < iHeight)){
+			ret = true;
+		}
+		console.log("In image: " + ret);
+		return ret;
+	}
+	
 	function PositionImage(){
 		$("#wrapper").each(function(e){
-			//var top = $(this).scrollTop() + e.pageY - $(this).offset().top,	left = e.pageX-$(this).offset().left;
-			var top = pickedY, left = pickedX;
+			var screen = document.getElementById("wrapper");
+			var top = trumpLocationY, left = trumpLocationX;
 			var img = document.getElementById('trumpImage');
+			console.log("screenX: " + screen.clientWidth + "  screenY: " + screen.clientHeight);
 			$('#trumpImage').remove();
 			var x = Math.round(left - iWidth/2);
 			var y = Math.round(top - iHeight/2);
@@ -58,8 +75,8 @@
 	function getVolume(event){
 		var screen = document.getElementById("wrapper");
 		var clickCoords = getCoords(event);
-		var longestDistance = getLongestPossibleDistance(screen.clientWidth, screen.clientHeight, pickedX, pickedY);
-		var distance = Math.sqrt(Math.pow(pickedX - clickCoords[0],2) + Math.pow(pickedY - clickCoords[1],2));
+		var longestDistance = getLongestPossibleDistance(screen.clientWidth, screen.clientHeight, trumpLocationX, trumpLocationY);
+		var distance = Math.sqrt(Math.pow(trumpLocationX - clickCoords[0],2) + Math.pow(trumpLocationY - clickCoords[1],2));
 		var volume = (1 - Math.pow((distance / longestDistance),1));
 		console.log("Volume: " + volume);
 		return volume;
@@ -77,17 +94,11 @@
 		var y = event.clientY;
 		return [x,y];
 	}
-	//window.onload = function() {
-	  //chooseLocation();
-	  //var wrapper = document.getElementById("wrapper");
-	  //wrapper.style.border = "black 2px double";
-	  //PositionImage();
-	//};
 	function chooseLocation(){
 		var screen = document.getElementById("wrapper");
-		pickedX = getRandomInt(0, screen.clientWidth);
-		pickedY = getRandomInt(0, screen.clientHeight);
-		//alert(pickedX + "   " + pickedY);
+		trumpLocationX = getRandomInt(0, screen.clientWidth);
+		trumpLocationY = getRandomInt(0, screen.clientHeight);
+		
 	}
 	function getRandomInt(min, max) {
 		var budget = 0.1;
